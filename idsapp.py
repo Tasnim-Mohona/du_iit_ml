@@ -666,30 +666,19 @@ def page_run_regularizers():
 
         # JUPYTER X and y are your features and target variable, respectively
         clf_pls = Classifier(train_feature_pls, test_feature_pls, y_train, y_test)
-
         # Perform cross-validation and get scores for PLS
         cross_val_scores_pls = clf_pls.cross_validate_models(train_feature_pls, y_train, models_to_cross_validate)
-
         # Plot cross-validation box plot for PLS
         clf_pls.plot_cross_val_boxplot(models_to_cross_validate)
-
 
     elif regularizer_option == 'Elastic Net':
         st.write("## Running Elastic Net Regularizer")
         elastic_net_model = Regularizer(X_train, X_test, y_train, y_test, X_train_scaled, X_test_scaled)
         train_feature_elastic_net, test_feature_elastic_net, coefficients_elastic_net = elastic_net_model.elastic_net()
 
-        # Total number of non-zero columns
-        total_non_zero_train_elastic_net = (coefficients_elastic_net != 0).sum()
-
-        st.write("\nTotal number of non-zero columns for training data (Elastic Net):", total_non_zero_train_elastic_net)
-
         # Display Elastic Net features
-        # elastic_net_features = train_feature_elastic_net.iloc[:, coefficients_elastic_net != 0]
         st.write("Elastic Net Features:")
-        # st.write(elastic_net_features)
-
-        # ... (similar display and evaluation as Lasso and Ridge)
+        st.write(train_feature_elastic_net)
 
         # JUPYTER X and y are your features and target variable, respectively
         clf_elastic_net = Classifier(train_feature_elastic_net, test_feature_elastic_net, y_train, y_test)
@@ -707,10 +696,18 @@ def page_run_regularizers():
         # Plot cross-validation box plot for Elastic Net
         clf_elastic_net.plot_cross_val_boxplot(models_to_cross_validate)
 
-    elif regularizer_option == 'Mutual Information':
-        st.write("## Running MI Regularizer")
-        mi_model = Regularizer(X_train, X_test, y_train, y_test, X_train_scaled, X_test_scaled)
-        X_selected_train, X_selected_test = mi_model.mutual_information(components=6)
+    # Additional steps specific to Elastic Net evaluation
+    # ...
+
+    # Display cross-validation results for Elastic Net
+    st.write("Cross-validation scores for Elastic Net:")
+    st.write(cross_val_scores_elastic_net)
+
+
+    # elif regularizer_option == 'Mutual Information':
+    #     st.write("## Running MI Regularizer")
+    #     mi_model = Regularizer(X_train, X_test, y_train, y_test, X_train_scaled, X_test_scaled)
+    #     X_selected_train, X_selected_test = mi_model.mutual_information(components=6)
         
 
 
