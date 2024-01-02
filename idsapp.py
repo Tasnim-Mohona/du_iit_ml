@@ -618,6 +618,9 @@ def page_run_regularizers():
 
             # Plot cross-validation box plot
             clf.plot_cross_val_boxplot(models_to_cross_validate)
+            st.write("Cross-validation scores for LASSO Rgression:")
+            st.write(cross_val_scores)
+
 
     elif regularizer_option == 'Ridge':
         st.write("## Running Ridge Regularizer")
@@ -628,48 +631,135 @@ def page_run_regularizers():
         total_non_zero_train_ridge = (coefficients_ridge != 0).sum()
 
         st.write("\nTotal number of non-zero columns for training data (Ridge):", total_non_zero_train_ridge)
-
         # Display Ridge features
         ridge_features = train_feature_ridge.iloc[:, coefficients_ridge != 0]
         st.write("Ridge Features:")
         st.write(ridge_features)
 
         # ... (similar display and evaluation as Lasso)
+        st.markdown('**Regularization**')
+        st.write('Ridge Regularized Dataset')
+        st.info(train_feature_ridge.shape)
+        st.write('Test set')
+        st.info(test_feature_ridge.shape)
 
-        # JUPYTER X and y are your features and target variable, respectively
-        clf_ridge = Classifier(train_feature_ridge, test_feature_ridge, y_train, y_test)
-        
+        st.markdown('**3.3. Ridge Features/Variable Details**:')
+        st.write('RidgeRegularized Variables')
+        st.info(list(ridge_features.columns))
+                
+##EVALUATE CLASSIFIERS
+        # Evaluate classifiers
+        st.write("## Classifier Evaluation on Ridge Regularized Data")
+    
+        # Choose classifiers
+        classifiers = st.multiselect('Select Classifiers to Evaluate', ['KNN', 'SVM', 'LDA', 'Decision Tree'])
+        # Ensure models_to_cross_validate is defined before the loop
         models_to_cross_validate = [
             ('KNN', KNeighborsClassifier(n_neighbors=3)),
             ('SVM', SVC(probability=True)),
             ('LDA', LinearDiscriminantAnalysis()),
             ('Decision Tree', DecisionTreeClassifier())
         ]
-        
-        # Perform cross-validation and get scores for Ridge
-        cross_val_scores_ridge = clf_ridge.cross_validate_models(train_feature_ridge, y_train, models_to_cross_validate)
 
-        # Plot cross-validation box plot for Ridge
-        clf_ridge.plot_cross_val_boxplot(models_to_cross_validate)
+        # Evaluate selected classifiers
+        for classifier_name in classifiers:
+            st.subheader(f"{classifier_name} Classification")
+            classifier = Classifier(train_feature_ridge, test_feature_ridge, y_train, y_test)
+
+            if classifier_name == 'KNN':
+                result_dict = classifier.knn()
+            elif classifier_name == 'SVM':
+                result_dict = classifier.svm()
+            elif classifier_name == 'LDA':
+                result_dict = classifier.lda()
+            elif classifier_name == 'Decision Tree':
+                result_dict = classifier.decision_tree()
+            
+            st.title('Evaluation Metrics - {}'.format(classifier_name))
+            st.write(result_dict)
+
+            # JUPYTER X and y are your features and target variable, respectively
+            clf = Classifier(train_feature_ridge, test_feature_ridge, y_train, y_test)
+
+            models_to_cross_validate = [
+                ('KNN', KNeighborsClassifier(n_neighbors=3)),
+                ('SVM', SVC(probability=True)),
+                ('LDA', LinearDiscriminantAnalysis()),
+                ('Decision Tree', DecisionTreeClassifier())
+            ]
+
+            # Perform cross-validation and get scores
+            cross_val_scores = clf.cross_validate_models(train_feature_ridge, y_train, models_to_cross_validate)
+
+            # Plot cross-validation box plot
+            clf.plot_cross_val_boxplot(models_to_cross_validate)
+            st.write("Cross-validation scores for Ridge Regression:")
+            st.write(cross_val_scores)
+
 
     elif regularizer_option == 'PLS':
         st.write("## Running PLS Regularizer")
         pls_model = Regularizer(X_train, X_test, y_train, y_test, X_train_scaled, X_test_scaled)
         train_feature_pls, test_feature_pls, coefficients_pls = pls_model.pls()
+
+
+        # Evaluate classifiers
+        st.write("## Classifier Evaluation on Partial Least Square(PLS) Regularized Data")
+
+        # Choose classifiers
+        classifiers = st.multiselect('Select Classifiers to Evaluate', ['KNN', 'SVM', 'LDA', 'Decision Tree'])
+        # Ensure models_to_cross_validate is defined before the loop
         models_to_cross_validate = [
             ('KNN', KNeighborsClassifier(n_neighbors=3)),
             ('SVM', SVC(probability=True)),
             ('LDA', LinearDiscriminantAnalysis()),
             ('Decision Tree', DecisionTreeClassifier())
         ]
-        # ... (similar display and evaluation as Lasso and Ridge)
 
-        # JUPYTER X and y are your features and target variable, respectively
-        clf_pls = Classifier(train_feature_pls, test_feature_pls, y_train, y_test)
-        # Perform cross-validation and get scores for PLS
-        cross_val_scores_pls = clf_pls.cross_validate_models(train_feature_pls, y_train, models_to_cross_validate)
-        # Plot cross-validation box plot for PLS
-        clf_pls.plot_cross_val_boxplot(models_to_cross_validate)
+        # Evaluate selected classifiers
+        for classifier_name in classifiers:
+            st.subheader(f"{classifier_name} Classification")
+            classifier = Classifier(train_feature_pls, test_feature_pls, y_train, y_test)
+
+            if classifier_name == 'KNN':
+                result_dict = classifier.knn()
+            elif classifier_name == 'SVM':
+                result_dict = classifier.svm()
+            elif classifier_name == 'LDA':
+                result_dict = classifier.lda()
+            elif classifier_name == 'Decision Tree':
+                result_dict = classifier.decision_tree()
+            
+            st.title('Evaluation Metrics - {}'.format(classifier_name))
+            st.write(result_dict)
+
+            # JUPYTER X and y are your features and target variable, respectively
+            clf = Classifier(train_feature_pls, test_feature_pls, y_train, y_test)
+
+            models_to_cross_validate = [
+                ('KNN', KNeighborsClassifier(n_neighbors=3)),
+                ('SVM', SVC(probability=True)),
+                ('LDA', LinearDiscriminantAnalysis()),
+                ('Decision Tree', DecisionTreeClassifier())
+            ]
+
+            # Perform cross-validation and get scores
+            cross_val_scores = clf.cross_validate_models(train_feature_pls, y_train, models_to_cross_validate)
+
+            # Plot cross-validation box plot
+            clf.plot_cross_val_boxplot(models_to_cross_validate)
+            st.write("Cross-validation scores for Partial Least Square(PLS):")
+            st.write(cross_val_scores)
+
+
+
+
+
+
+
+
+
+
 
     elif regularizer_option == 'Elastic Net':
         st.write("## Running Elastic Net Regularizer")
@@ -679,10 +769,32 @@ def page_run_regularizers():
         # Display Elastic Net features
         st.write("Elastic Net Features:")
         st.write(train_feature_elastic_net)
+###########################################################
+        # # JUPYTER X and y are your features and target variable, respectively
+        # clf_elastic_net = Classifier(train_feature_elastic_net, test_feature_elastic_net, y_train, y_test)
 
-        # JUPYTER X and y are your features and target variable, respectively
-        clf_elastic_net = Classifier(train_feature_elastic_net, test_feature_elastic_net, y_train, y_test)
+        # models_to_cross_validate = [
+        #     ('KNN', KNeighborsClassifier(n_neighbors=3)),
+        #     ('SVM', SVC(probability=True)),
+        #     ('LDA', LinearDiscriminantAnalysis()),
+        #     ('Decision Tree', DecisionTreeClassifier())
+        # ]
 
+        # # Perform cross-validation and get scores for Elastic Net
+        # cross_val_scores_elastic_net = clf_elastic_net.cross_validate_models(train_feature_elastic_net, y_train, models_to_cross_validate)
+
+        # # Plot cross-validation box plot for Elastic Net
+        # clf_elastic_net.plot_cross_val_boxplot(models_to_cross_validate)
+        # # Display cross-validation results for Elastic Net
+        # st.write("Cross-validation scores for Elastic Net:")
+        # st.write(cross_val_scores_elastic_net)
+###################################################################
+        # Evaluate classifiers
+        st.write("## Classifier Evaluation on Elastic Net Regularized Data")
+
+        # Choose classifiers
+        classifiers = st.multiselect('Select Classifiers to Evaluate', ['KNN', 'SVM', 'LDA', 'Decision Tree'])
+        # Ensure models_to_cross_validate is defined before the loop
         models_to_cross_validate = [
             ('KNN', KNeighborsClassifier(n_neighbors=3)),
             ('SVM', SVC(probability=True)),
@@ -690,20 +802,40 @@ def page_run_regularizers():
             ('Decision Tree', DecisionTreeClassifier())
         ]
 
-        # Perform cross-validation and get scores for Elastic Net
-        cross_val_scores_elastic_net = clf_elastic_net.cross_validate_models(train_feature_elastic_net, y_train, models_to_cross_validate)
+        # Evaluate selected classifiers
+        for classifier_name in classifiers:
+            st.subheader(f"{classifier_name} Classification")
+            classifier = Classifier(train_feature_elastic_net, test_feature_elastic_net, y_train, y_test)
 
-        # Plot cross-validation box plot for Elastic Net
-        clf_elastic_net.plot_cross_val_boxplot(models_to_cross_validate)
+            if classifier_name == 'KNN':
+                result_dict = classifier.knn()
+            elif classifier_name == 'SVM':
+                result_dict = classifier.svm()
+            elif classifier_name == 'LDA':
+                result_dict = classifier.lda()
+            elif classifier_name == 'Decision Tree':
+                result_dict = classifier.decision_tree()
+            
+            st.title('Evaluation Metrics - {}'.format(classifier_name))
+            st.write(result_dict)
 
-    # Additional steps specific to Elastic Net evaluation
-    # ...
+            # JUPYTER X and y are your features and target variable, respectively
+            clf = Classifier(train_feature_elastic_net, test_feature_elastic_net, y_train, y_test)
 
-        # Display cross-validation results for Elastic Net
-        st.write("Cross-validation scores for Elastic Net:")
-        st.write(cross_val_scores_elastic_net)
+            models_to_cross_validate = [
+                ('KNN', KNeighborsClassifier(n_neighbors=3)),
+                ('SVM', SVC(probability=True)),
+                ('LDA', LinearDiscriminantAnalysis()),
+                ('Decision Tree', DecisionTreeClassifier())
+            ]
 
+            # Perform cross-validation and get scores
+            cross_val_scores = clf.cross_validate_models(train_feature_elastic_net, y_train, models_to_cross_validate)
 
+            # Plot cross-validation box plot
+            clf.plot_cross_val_boxplot(models_to_cross_validate)
+            st.write("Cross-validation scores for Elastic Net:")
+            st.write(cross_val_scores)
     # elif regularizer_option == 'Mutual Information':
     #     st.write("## Running MI Regularizer")
     #     mi_model = Regularizer(X_train, X_test, y_train, y_test, X_train_scaled, X_test_scaled)
