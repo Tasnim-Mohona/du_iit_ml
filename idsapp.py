@@ -699,9 +699,9 @@ def page_run_regularizers():
     # Additional steps specific to Elastic Net evaluation
     # ...
 
-    # Display cross-validation results for Elastic Net
-    st.write("Cross-validation scores for Elastic Net:")
-    st.write(cross_val_scores_elastic_net)
+        # Display cross-validation results for Elastic Net
+        st.write("Cross-validation scores for Elastic Net:")
+        st.write(cross_val_scores_elastic_net)
 
 
     # elif regularizer_option == 'Mutual Information':
